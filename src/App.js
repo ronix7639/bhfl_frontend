@@ -1,23 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import axios from 'axios';
+import JsonInput from './components/JsonInput';
+import MultiSelect from './components/MultiSelect';
+import ResponseDisplay from './components/ResponseDisplay';
 
 function App() {
+  const [jsonData, setJsonData] = useState('');
+  const [response, setResponse] = useState(null);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const handleSubmit = async () => {
+    try {
+      const res = await axios.post('https://bhfl-backend-theta.vercel.app/', JSON.parse(jsonData));
+      setResponse(res.data);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Invalid JSON or server error.');
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>21BCI0278</h1>
+      <JsonInput jsonData={jsonData} setJsonData={setJsonData} handleSubmit={handleSubmit} />
+      {response && (
+        <>
+          <MultiSelect selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
+          <ResponseDisplay response={response} selectedOptions={selectedOptions} />
+        </>
+      )}
     </div>
   );
 }
